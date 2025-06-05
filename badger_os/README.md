@@ -118,3 +118,10 @@ Display QR codes and associated text.
 
 Display current weather data from the [Open-Meteo weather API](https://open-meteo.com/)
 
+
+### GitHub Badge
+[github_badge.py](examples/github_badge.py)
+
+Fetches your GitHub profile stats and latest repository info over the network.
+It also pulls contribution data from a public API to draw a grid showing your
+recent activity and displays a QR code linking to your profile.
