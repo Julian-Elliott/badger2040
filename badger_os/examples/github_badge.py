@@ -77,8 +77,6 @@ def get_contributions():
         except Exception:
             pass
 
-    get_contributions()
-
 
 # Draw a simple contributions grid
 def draw_activity(x, y, cols=20, rows=7, cell=4):
@@ -166,6 +164,7 @@ def draw_page():
 
 
 def main():
+    get_contributions()
     get_data()
     draw_page()
     while True:
