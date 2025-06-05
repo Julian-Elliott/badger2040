@@ -45,7 +45,7 @@ button_down = badger2040.BUTTONS[badger2040.BUTTON_DOWN]
 
 # Button handling function
 def button(pin):
-    global last, set_clock, toggle_set_clock, cursor, year, month, day, hour, minute
+    global toggle_set_clock, cursor, year, month, day, hour, minute
 
     time.sleep(0.01)
     if not pin.value():
@@ -162,7 +162,7 @@ def draw_clock():
 
 
 def draw_second():
-    global second_offset, second_unit_offset
+    global second_unit_offset
 
     display.set_pen(15)
     display.rectangle(second_offset, 8, 75, 56)

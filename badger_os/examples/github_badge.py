@@ -6,6 +6,9 @@ from badger2040 import WIDTH
 import urequests
 import qrcode
 
+# GitHub API requires a User-Agent header
+HEADERS = {"User-Agent": "Badger2040"}
+
 # Replace this with your GitHub username
 USERNAME = "Julian-Elliott"
 
@@ -53,23 +56,42 @@ display.connect()
 
 def get_data():
     global login, repos, followers, latest_repo, pushed
-    r = urequests.get(USER_URL)
-    user = r.json()
-    r.close()
-    login = user.get("login", USERNAME)
-    repos = user.get("public_repos", 0)
-    followers = user.get("followers", 0)
+    try:
+        r = urequests.get(USER_URL, headers=HEADERS)
+        user = r.json()
+        login = user.get("login", USERNAME)
+        repos = user.get("public_repos", 0)
+        followers = user.get("followers", 0)
+    except Exception as e:
+        print(f"Failed to fetch user info: {e}")
+        login = USERNAME
+        repos = 0
+        followers = 0
+    finally:
+        try:
+            r.close()
+        except Exception:
+            pass
 
-    r = urequests.get(REPO_URL)
-    repo_list = r.json()
-    r.close()
-    if repo_list and isinstance(repo_list, list):
-        repo = repo_list[0]
-        latest_repo = repo.get("name", "")
-        pushed = repo.get("pushed_at", "").split("T")[0]
-    else:
+    try:
+        r = urequests.get(REPO_URL, headers=HEADERS)
+        repo_list = r.json()
+        if repo_list and isinstance(repo_list, list):
+            repo = repo_list[0]
+            latest_repo = repo.get("name", "")
+            pushed = repo.get("pushed_at", "").split("T")[0]
+        else:
+            latest_repo = ""
+            pushed = ""
+    except Exception as e:
+        print(f"Failed to fetch repo info: {e}")
         latest_repo = ""
         pushed = ""
+    finally:
+        try:
+            r.close()
+        except Exception:
+            pass
 
 
 def draw_page():
