@@ -5,7 +5,7 @@ import badger2040
 from badger2040 import WIDTH
 import urequests
 import qrcode
-import ure
+import time
 
 # GitHub API requires a User-Agent header
 HEADERS = {"User-Agent": "Badger2040"}
@@ -19,7 +19,7 @@ REPO_URL = (
 )
 
 # URL for contribution data
-CONTRIB_URL = "https://github.com/users/" + USERNAME + "/contributions"
+CONTRIB_URL = "https://github-contributions-api.jogruber.de/v4/" + USERNAME
 
 # URL used for the QR code
 GITHUB_URL = "https://github.com/" + USERNAME
@@ -63,11 +63,12 @@ display.connect()
 def get_contributions():
     global contributions
     contributions = []
+    year = time.gmtime()[0]
+    url = f"{CONTRIB_URL}?y={year}"
     try:
-        r = urequests.get(CONTRIB_URL, headers=HEADERS)
-        html = r.text
-        pattern = ure.compile('data-date="[^"]*"[^>]*data-level="([0-9])"')
-        contributions = [int(m) for m in pattern.findall(html)][-140:]
+        r = urequests.get(url, headers=HEADERS)
+        data = r.json()
+        contributions = [c.get("level", 0) for c in data.get("contributions", [])][-140:]
     except Exception as e:
         print(f"Failed to fetch contributions: {e}")
         contributions = []
